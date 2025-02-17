@@ -11,15 +11,26 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 
 @Composable
-fun WellnessScreen(modifier: Modifier = Modifier) {
+fun WellnessScreen(
+    modifier: Modifier = Modifier,
+    wellnessViewModel: WellnessViewModel = viewModel()
+) {
     Column(modifier = modifier) {
         StatefulCounter()
 
-        val list = remember{ getWellnessTasks().toMutableList() }
-        WellnessTasksList(list = list, onCloseTask = { task -> list.remove(task) })
+        WellnessTasksList(
+            list = wellnessViewModel.tasks,
+            onCheckedTask = { task, checked ->
+                wellnessViewModel.changeTaskChecked(task, checked)
+            },
+            onCloseTask = { task ->
+                wellnessViewModel.remove(task)
+            }
+        )
     }
 }
 
@@ -35,17 +46,17 @@ fun StatelessCounter(count: Int, onIncrement: () -> Unit, modifier: Modifier = M
     }
 }
 
-@Composable
-fun AnotherStatelessMethod(count: Int, onIncrement: () -> Unit, modifier: Modifier = Modifier) {
-    Column(modifier = modifier.padding(16.dp)) {
-        if (count > 0) {
-            Text("You've had $count glasses.")
-        }
-        Button(onClick = onIncrement, Modifier.padding(top = 8.dp), enabled = count < 10) {
-            Text("Add one")
-        }
-    }
-}
+//@Composable
+//fun AnotherStatelessMethod(count: Int, onIncrement: () -> Unit, modifier: Modifier = Modifier) {
+//    Column(modifier = modifier.padding(16.dp)) {
+//        if (count > 0) {
+//            Text("You've had $count glasses.")
+//        }
+//        Button(onClick = onIncrement, Modifier.padding(top = 8.dp), enabled = count < 10) {
+//            Text("Add one")
+//        }
+//    }
+//}
 
 @Composable
 fun StatefulCounter(modifier: Modifier = Modifier) {
